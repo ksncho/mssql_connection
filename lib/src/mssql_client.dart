@@ -127,6 +127,19 @@ class MssqlClient {
             'connect | op=dbsetlbool | option=DBSETBCP | value=1 | error=$e',
           );
         }
+
+        // Disable encryption for older SQL Server versions (추가)
+        try {
+          const DBSETENCRYPT = 12; // FreeTDS constant
+          final rcEncrypt = _db!.dbsetlbool(login, DBSETENCRYPT, 0);
+          MssqlLogger.i(
+            'connect | op=dbsetlbool | option=DBSETENCRYPT | value=0 | rc=$rcEncrypt',
+          );
+        } catch (e) {
+          MssqlLogger.w(
+            'connect | op=dbsetlbool | option=DBSETENCRYPT | value=0 | error=$e',
+          );
+        }
       } finally {
         malloc.free(u);
         malloc.free(p);
